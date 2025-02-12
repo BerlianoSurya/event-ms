@@ -9,7 +9,9 @@ const Shell = ({ children }) => {
       </aside>
       <div className="w-[calc(100vw-200px)] ">
         <Nav />
-        <main className="h-[calc(100vh-65px)]">{children}</main>
+        <main className="h-[calc(100vh-65px)] overflow-scroll py-5">
+          {children}
+        </main>
       </div>
     </div>
   )

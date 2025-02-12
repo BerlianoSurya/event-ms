@@ -56,6 +56,35 @@ export const getOneEvent = memoize(
   }
 )
 
+export const editEventUtil = async ({
+  name,
+  createdById,
+  startOn,
+  isPrivate,
+}: {
+  name: string
+  createdById: string
+  startOn: string
+  isPrivate: boolean
+}) => {
+  const rows = await db
+    .insert(events)
+    .values({
+      name,
+      createdById,
+      startOn,
+      isPrivate,
+    })
+    .returning({
+      id: events.id,
+      name: events.name,
+    })
+
+  const data = rows[0]
+
+  return data
+}
+
 // export const deleteEventById = memoize(
 //   async (eventId: string) => {
 //     await delay()
