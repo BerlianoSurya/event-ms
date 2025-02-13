@@ -1,13 +1,17 @@
 'use client'
 import Link from 'next/link'
-import { Button } from '@nextui-org/react'
+// import { Button } from '@nextui-org/react'
 import { useState } from 'react'
 import { useTransition } from 'react'
 import { deleteEventById } from '@/actions/events'
 import EventForm from './EventForm'
+import { Button } from '@/components/ui/button'
+import Modal from './Modal'
+import { CirclePlus } from 'lucide-react'
 
 const EventList = async ({ data }) => {
   const [isShown, setShown] = useState(false)
+  const [addModal, setaddModal] = useState(false)
   const [eventId, setEventId] = useState('')
   const [eventData, setEventData] = useState({})
   const [isPending, startTransition] = useTransition()
@@ -20,10 +24,20 @@ const EventList = async ({ data }) => {
       }
     })
   }
+  const handleOpenModal = () => {
+    startTransition(() => {
+      setaddModal(true)
+    })
+  }
   const handleClose = () => {
     startTransition(() => {
       setShown(false)
       setEventId('')
+    })
+  }
+  const handleCloseAddModal = () => {
+    startTransition(() => {
+      setaddModal(false)
     })
   }
   const handleDelete = async (eventId: string) => {
@@ -44,8 +58,15 @@ const EventList = async ({ data }) => {
 
   return (
     <div>
-      <h1>afs{`\n${eventId}`}</h1>
-      <div className="m-6 relative flex flex-col bg-gray-950 overflow-scroll text-foreground shadow-md rounded-xl bg-clip-border">
+      <div className="w-full flex justify-end">
+        <Button
+          className="text-white text-lg"
+          onClick={() => handleOpenModal()}
+        >
+          <CirclePlus size={1114} /> Add event
+        </Button>
+      </div>
+      <div className="my-6 relative flex flex-col bg-gray-950 overflow-scroll text-foreground shadow-md rounded-xl bg-clip-border">
         <table className="w-auto h-auto text-left table-auto">
           <thead>
             <tr>
@@ -76,13 +97,19 @@ const EventList = async ({ data }) => {
                 <td className="whitespace-nowrap border-e border-neutral-200 px-6 py-4 font-medium dark:border-white/10">
                   {event.createdById}
                 </td>
-                <td className="whitespace-nowrap border-e border-neutral-200 px-6 py-4 font-medium dark:border-white/10">
-                  <Button onClick={() => handleClick(event.id)}>Edit</Button>
+                <td className="whitespace-nowrap border-e border-neutral-200 px-6 py-4 font-medium dark:border-white/10 place-content-around flex gap-4">
                   <Button
+                    className="text-white"
+                    onClick={() => handleClick(event.id)}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    className="text-white"
                     onClick={() => handleDelete(event.id)}
                     disabled={isPending}
                   >
-                    {isPending ? 'Deleting...' : 'Delete'}
+                    {'Delete'}
                   </Button>
                 </td>
               </tr>
@@ -90,30 +117,24 @@ const EventList = async ({ data }) => {
           </tbody>
         </table>
       </div>
-      {isShown && (
-        <div
-          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
-          onClick={handleClose} // Close modal when clicking the backdrop
-        >
-          <div
-            className="flex flex-col w-[60vw] h-[40vh] bg-gray-700 p-6 rounded-xl shadow-lg relative"
-            onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside modal
-          >
-            <div className="flex flex-3 justify-self-center justify-end content-end w-auto items-end">
-              <button
-                onClick={handleClose}
-                className="text-gray-600 hover:text-black text-3xl justify-self-end self-end"
-              >
-                &times;
-              </button>
-            </div>
-            <div className="flex-1">
-              <EventForm actionType="edit" eventData={eventData} />
-              <p className="text-white">This is modal {eventId}</p>
-            </div>
-          </div>
-        </div>
-      )}
+      <Modal isOpen={isShown} handleClose={handleClose} header="Edit Event">
+        <EventForm
+          actionType="edit"
+          eventData={eventData}
+          handleClose={handleClose}
+        />
+      </Modal>
+      <Modal
+        isOpen={addModal}
+        handleClose={handleCloseAddModal}
+        header="Add Event"
+      >
+        <EventForm
+          actionType="add"
+          eventData={null}
+          handleClose={handleCloseAddModal}
+        />
+      </Modal>
     </div>
   )
 }

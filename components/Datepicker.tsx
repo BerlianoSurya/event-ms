@@ -10,7 +10,7 @@ import { CalendarIcon } from 'lucide-react'
 import { format } from 'date-fns'
 import { Calendar } from '@/components/ui/calendar'
 
-const Datepicker = ({ name }: { name: string }) => {
+const Datepicker = ({ name, selected, onSelect }) => {
   const [date, setDate] = useState<Date>()
   return (
     <>
@@ -20,23 +20,22 @@ const Datepicker = ({ name }: { name: string }) => {
             variant={'outline'}
             className={cn(
               'w-[280px] justify-start text-left font-normal',
-              !date && 'text-muted-foreground'
+              !selected && 'text-muted-foreground'
             )}
           >
             <CalendarIcon />
-            {date ? format(date, 'PPP') : <span>Pick a Date</span>}
+            {selected ? format(selected, 'PPP') : <span>Pick a Date</span>}
           </Button>
         </PopoverTrigger>
         <PopoverContent>
           <Calendar
             mode="single"
-            selected={date}
-            onSelect={setDate}
+            selected={selected}
+            onSelect={onSelect}
             initialFocus
           />
         </PopoverContent>
       </Popover>
-      <input type="hidden" name={name} value={date?.toISOString()} />
     </>
   )
 }

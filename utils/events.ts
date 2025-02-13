@@ -84,15 +84,3 @@ export const editEventUtil = async ({
 
   return data
 }
-
-// export const deleteEventById = memoize(
-//   async (eventId: string) => {
-//     await delay()
-//     console.log('EVENTID', eventId)
-//     await db.delete(events).where(eq(events.id, eventId))
-//   },
-//   {
-//     persist: true,
-//     revalidateTags: () => ['events', 'dashboard:events'],
-//   }
-// )

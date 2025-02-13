@@ -45,19 +45,29 @@ export const deleteEventById = async (eventId: string) => {
 
 export const editEvent = async (prevstate: any, formData: FormData) => {
   console.log(formData)
+  if (formData.get('actionType')) {
+    const user = await getCurrentUser()
+    if (formData.get('actionType') === 'add') {
+      await db.insert(events).values({
+        startOn: formData.get('startOn'),
+        createdById: user.id,
+        isPrivate: formData.get('isPrivate'),
+        name: formData.get('name'),
+      })
+      revalidateTag('dashboard:events')
+      revalidateTag('events')
+    } else if (formData.get('actionType') === 'edit') {
+      await db
+        .update(events)
+        .set({
+          startOn: formData.get('startOn'),
+          isPrivate: formData.get('isPrivate'),
+          name: formData.get('name'),
+        })
+        .where(eq(events.id, formData.get('eventId')))
 
-  return { message: 'Form submitted' }
-  // const data = authSchema.parse({
-  //   name: formData.get('name'),
-  //   createdById: formData.get('createdById'),
-  //   startOn: formData.get('startOn'),
-  //   isPrivate: formData.get('isPrivate'),
-  // })
-  // try {
-  //   const event = await editEventUtil(data)
-  // } catch (e) {
-  //   console.log(e)
-  //   return { message: 'Failed to sign you up' }
-  // }
-  // redirect('/dashboard')
+      revalidateTag('dashboard:events')
+      revalidateTag('events')
+    }
+  }
 }

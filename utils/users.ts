@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation'
 import { getUserFromToken } from './authTools'
 
 export const getCurrentUser = async () => {
-  const token = cookies().get(COOKIE_NAME)
+  const token = await cookies().get(COOKIE_NAME)
   if (!token) redirect('/signin')
 
   const user = await getUserFromToken(token)

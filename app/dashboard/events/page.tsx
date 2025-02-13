@@ -1,8 +1,6 @@
-// /app/dashboard/events/page.tsx
 import { getAllEvents } from '@/utils/events'
 import { getCurrentUser } from '@/utils/users'
 import Link from 'next/link'
-import { Button } from '@nextui-org/react'
 import EventList from '@/components/EventList'
 
 const Events = async () => {

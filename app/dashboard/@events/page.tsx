@@ -1,6 +1,6 @@
 import { getEventsForDashboard } from '@/utils/events'
 import { getCurrentUser } from '@/utils/users'
-import { Chip } from '@nextui-org/react'
+// import { Chip } from '@nextui-org/react'
 import Link from 'next/link'
 const statusColors = {
   draft: 'warning',
@@ -26,14 +26,14 @@ const EventsSlot = async () => {
                 <span>{event.name}</span>
               </Link>
               <span>
-                <Chip size="sm" color={statusColors[event.status]}>
-                  {event.status}
-                </Chip>
+                {/* <Chip size="sm" color={statusColors[event.status]}> */}
+                {event.status}
+                {/* </Chip> */}
               </span>
               <span>
-                <Chip size="sm" variant="faded">
-                  {event.name}
-                </Chip>
+                {/* <Chip size="sm" variant="faded"> */}
+                {event.name}
+                {/* </Chip> */}
               </span>
             </div>
           ))}

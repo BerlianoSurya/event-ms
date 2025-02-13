@@ -1,6 +1,6 @@
 'use client'
 
-import { Input } from '@nextui-org/react'
+// import { Input } from '@nextui-org/react'
 import { registerUser } from '@/actions/auth'
 import Link from 'next/link'
 import { useFormState } from 'react-dom'
