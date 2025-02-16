@@ -11,13 +11,7 @@ import { z } from 'zod'
 import { redirect } from 'next/navigation'
 import { COOKIE_NAME } from '@/utils/constants'
 import { editEventUtil } from '@/utils/events'
-
-const authSchema = z.object({
-  name: z.string(),
-  createdById: z.string(),
-  startOn: z.string().date(),
-  isPrivate: z.boolean(),
-})
+import { eventSchema } from '@/utils/formSchema'
 
 export const createNewEvent = async () => {
   await delay()
@@ -44,30 +38,66 @@ export const deleteEventById = async (eventId: string) => {
 }
 
 export const editEvent = async (prevstate: any, formData: FormData) => {
-  console.log(formData)
-  if (formData.get('actionType')) {
-    const user = await getCurrentUser()
-    if (formData.get('actionType') === 'add') {
-      await db.insert(events).values({
-        startOn: formData.get('startOn'),
-        createdById: user.id,
-        isPrivate: formData.get('isPrivate'),
-        name: formData.get('name'),
-      })
-      revalidateTag('dashboard:events')
-      revalidateTag('events')
-    } else if (formData.get('actionType') === 'edit') {
-      await db
-        .update(events)
-        .set({
+  // console.log(formData)
+
+  const validation = await eventSchema.safeParse({
+    startOn: formData.get('startOn'),
+    isPrivate: formData.get('isPrivate'),
+    name: formData.get('name'),
+    status: formData.get('status'),
+    street: formData.get('street'),
+    streetNumber: formData.get('streetNumber'),
+    zip: formData.get('zip'),
+    description: formData.get('description'),
+  })
+
+  if (validation.success) {
+    if (formData.get('actionType')) {
+      const user = await getCurrentUser()
+      if (formData.get('actionType') === 'add') {
+        await db.insert(events).values({
           startOn: formData.get('startOn'),
+          createdById: user.id,
           isPrivate: formData.get('isPrivate'),
           name: formData.get('name'),
+          status: formData.get('status'),
+          street: formData.get('street'),
+          streetNumber: formData.get('streetNumber'),
+          zip: formData.get('zip'),
+          description: formData.get('description'),
         })
-        .where(eq(events.id, formData.get('eventId')))
+        revalidateTag('dashboard:events')
+        revalidateTag('events')
+      } else if (formData.get('actionType') === 'edit') {
+        await db
+          .update(events)
+          .set({
+            startOn: formData.get('startOn'),
+            isPrivate: formData.get('isPrivate'),
+            name: formData.get('name'),
+            status: formData.get('status'),
+            street: formData.get('street'),
+            streetNumber: formData.get('streetNumber'),
+            zip: formData.get('zip'),
+            description: formData.get('description'),
+          })
+          .where(eq(events.id, formData.get('eventId')))
 
-      revalidateTag('dashboard:events')
-      revalidateTag('events')
+        revalidateTag('dashboard:events')
+        revalidateTag('events')
+      }
+    }
+
+    return {
+      success: validation.success,
+      data: validation.data,
+      errors: false,
+    }
+  } else {
+    return {
+      success: validation.success,
+      errors: validation.error.issues,
+      data: validation.data,
     }
   }
 }

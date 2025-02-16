@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
+import { Toaster } from '@/components/ui/sonner'
 // import NextUIProvider from './NextUIProvider'
 // import { cn } from '@nextui-org/react'
 
@@ -25,6 +26,7 @@ export default function RootLayout({
         {children}
 
         {/* </NextUIProvider> */}
+        <Toaster expand={true} richColors />
       </body>
     </html>
   )

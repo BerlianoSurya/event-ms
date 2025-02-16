@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label'
 import { useActionState } from 'react'
 import { editEvent } from '@/actions/events'
 import Datepicker from './Datepicker'
+import { useState } from 'react'
 import {
   Form,
   FormControl,
@@ -18,21 +19,30 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { toast } from 'sonner'
+import { eventSchema } from '@/utils/formSchema'
 
 type EventData = {
   name: string
   startOn: string
   isPrivate: boolean
+  status: string
+  street: string
+  streetNumber: number
+  description: string
+  zip: number
 } | null
 
-const eventSchema = z.object({
-  name: z.string().min(1, 'String cannot be empty'),
-  startOn: z.coerce.date(),
-  isPrivate: z.boolean().default(false),
-})
 const EventForm = ({
   actionType,
   eventData,
@@ -42,18 +52,29 @@ const EventForm = ({
   eventData: EventData
   handleClose: void
 }) => {
+  const [errors, setErrors] = useState({})
   const withHandleClose = (action: any, handleClose: () => void) => {
     return async (prevState: any, formData: FormData) => {
       const result = await action(prevState, formData)
-      handleClose() // Close modal after form submission
+      if (result?.success === true) {
+        setErrors({})
+        toast.success('The form is successfully submit.')
+        handleClose()
+      } else {
+        const errorMap = {}
+        result?.errors.forEach((issue) => {
+          errorMap[issue.path[0]] = issue.message
+        })
+        setErrors(errorMap)
+        result?.errors.every((error) => {
+          toast.error(error.message)
+        })
+      }
       return result
     }
   }
   const wrappedAction = withHandleClose(editEvent, handleClose)
-  const [formState, formAction] = useActionState(wrappedAction, null)
-
-  console.log(formState)
-  console.log('fields returned: ', { ...(formState?.fields ?? {}) })
+  const [formState, formAction, isPending] = useActionState(wrappedAction, null)
 
   const form = useForm({
     resolver: zodResolver(eventSchema),
@@ -65,30 +86,21 @@ const EventForm = ({
               ? new Date(eventData.startOn).toISOString().split('T')[0]
               : '',
             isPrivate: eventData?.isPrivate,
+            status: eventData?.status,
+            street: eventData?.street,
+            streetNumber: eventData?.streetNumber,
+            zip: eventData?.zip,
+            description: eventData?.description,
           }
-        : { startOn: new Date().toISOString().split('T')[0] },
+        : {
+            isPrivate: false,
+            startOn: new Date().toISOString().split('T')[0],
+          },
   })
-
-  // console.log('date', typeof eventData.startOn)
 
   return (
     <Form {...form}>
-      <form
-        // onSubmit={async (e) => {
-        //   e.preventDefault()
-        //   const eventData = getValues()
-        //   if (actionType === 'add') {
-        //     // Handle adding event
-        //   } else if (actionType === 'edit') {
-        //     console.log('DATA', eventData)
-        //   }
-        // }}
-        action={formAction}
-        // onSubmit={(e) => {
-        //   // e.preventDefault()
-        //   handleClose()
-        // }}
-      >
+      <form action={formAction}>
         <FormField
           control={form.control}
           name="name"
@@ -98,6 +110,10 @@ const EventForm = ({
               <FormControl>
                 <Input placeholder="Event title" {...field} />
               </FormControl>
+
+              {errors.name && (
+                <p className="text-red-500 text-sm">{errors.name}</p>
+              )}
             </FormItem>
           )}
         />
@@ -125,6 +141,96 @@ const EventForm = ({
           )}
         />
 
+        <FormField
+          control={form.control}
+          name="street"
+          render={({ field }) => (
+            <FormItem className="flex flex-col items-start space-y-2 rounded-md p-4 shadow">
+              <FormLabel>Street</FormLabel>
+              <FormControl>
+                <Input placeholder="street" {...field} />
+              </FormControl>
+              {errors.street && (
+                <p className="text-red-500 text-sm">{errors.street}</p>
+              )}
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="streetNumber"
+          render={({ field }) => (
+            <FormItem className="flex flex-col items-start space-y-2 rounded-md p-4 shadow">
+              <FormLabel>Street Number</FormLabel>
+              <FormControl>
+                <Input placeholder="streetNumber" type="number" {...field} />
+              </FormControl>
+              {errors.streetNumber && (
+                <p className="text-red-500 text-sm">{errors.streetNumber}</p>
+              )}
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="zip"
+          render={({ field }) => (
+            <FormItem className="flex flex-col items-start space-y-2 rounded-md p-4 shadow">
+              <FormLabel>ZIP</FormLabel>
+              <FormControl>
+                <Input placeholder="zip code" type="number" {...field} />
+              </FormControl>
+              {errors.zip && (
+                <p className="text-red-500 text-sm">{errors.zip}</p>
+              )}
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem className="flex flex-col items-start space-y-2 rounded-md p-4 shadow">
+              <FormLabel>Description</FormLabel>
+              <FormControl>
+                <Input placeholder="description" {...field} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="status"
+          render={({ field }) => (
+            <FormItem className="flex flex-col items-start space-y-2 rounded-md p-4 shadow">
+              <FormLabel>Status</FormLabel>
+              <FormControl>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  name="status"
+                >
+                  <SelectTrigger>
+                    <SelectValue id="status" placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="draft">Draft</SelectItem>
+                    <SelectItem value="live">Live</SelectItem>
+                    <SelectItem value="started">Started</SelectItem>
+                    <SelectItem value="ended">Ended</SelectItem>
+                    <SelectItem value="canceled">Canceled</SelectItem>
+                  </SelectContent>{' '}
+                </Select>
+              </FormControl>
+
+              {errors.status && (
+                <p className="text-red-500 text-sm">{errors.status}</p>
+              )}
+            </FormItem>
+          )}
+        />
+
         {/* <div>
             <Label>Date</Label>
           </div> */}
@@ -146,23 +252,22 @@ const EventForm = ({
               <input
                 type="hidden"
                 name="isPrivate"
-                value={field.value ? 'true' : 'false'}
+                value={field.value ? true : false}
               />
             </FormItem>
           )}
         />
-        {/* <div>
-            <label>
-              <input type="checkbox" {...form.register('isPrivate')} />
-              Private Event
-            </label>
-          </div> */}
         <div className="flex justify-center space-x-3 space-y-0 rounded-md p-4 shadow">
           <Button
+            disabled={isPending}
             className="justify-self-center text-white hover:bg-slate-800"
             type="submit"
           >
-            Save event
+            {isPending ? (
+              <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+            ) : (
+              `Save event`
+            )}
           </Button>
           <input type="hidden" name="actionType" value={actionType} />
           {actionType === 'edit' && (

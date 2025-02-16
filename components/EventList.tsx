@@ -80,6 +80,9 @@ const EventList = async ({ data }) => {
                 Created By
               </th>
               <th className="p-4 border-e border-neutral-200 px-6 py-4 dark:border-white/10 bg-slate-900">
+                Status
+              </th>
+              <th className="p-4 border-e border-neutral-200 px-6 py-4 dark:border-white/10 bg-slate-900">
                 Action
               </th>
             </tr>
@@ -96,6 +99,9 @@ const EventList = async ({ data }) => {
                 </td>
                 <td className="whitespace-nowrap border-e border-neutral-200 px-6 py-4 font-medium dark:border-white/10">
                   {event.createdById}
+                </td>
+                <td className="whitespace-nowrap border-e border-neutral-200 px-6 py-4 font-medium dark:border-white/10">
+                  {event.status}
                 </td>
                 <td className="whitespace-nowrap border-e border-neutral-200 px-6 py-4 font-medium dark:border-white/10 place-content-around flex gap-4">
                   <Button

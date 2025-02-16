@@ -14,7 +14,7 @@ const EventsSlot = async () => {
   const events = await getEventsForDashboard(user.id)
   return (
     <div className="w-full h-full p-4 flex justify-center">
-      <div className="w-full">
+      <div className="w-full overflow-scroll">
         <h2 className="text-center text-xl">{`Latest Events`}</h2>
         <div className="rounded-md border border-default-100 my-8">
           {events.map((event) => (
