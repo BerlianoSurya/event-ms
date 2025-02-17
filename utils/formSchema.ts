@@ -23,3 +23,7 @@ export const eventSchema = z.object({
     .refine((val) => `${val}`.length === 5, 'ZIP Code must be 5 digit long'),
   description: z.string(),
 })
+export const attendeesSchema = z.object({
+  name: z.string().min(5, 'Name too short'),
+  email: z.string().email({ message: 'Email is required' }),
+})
