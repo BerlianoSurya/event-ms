@@ -249,11 +249,7 @@ const EventForm = ({
               <div className="space-y-1 leading-none">
                 <FormLabel>Private</FormLabel>
               </div>
-              <input
-                type="hidden"
-                name="isPrivate"
-                value={field.value ? true : false}
-              />
+              <input type="hidden" name="isPrivate" value={field.value} />
             </FormItem>
           )}
         />

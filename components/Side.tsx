@@ -11,6 +11,7 @@ const links = [
   { route: '/dashboard', name: 'Home' },
   { route: '/dashboard/events', name: 'Events' },
   { route: '/dashboard/guests', name: 'Guests' },
+  { route: '/dashboard/attendees', name: 'Attendees' },
 ]
 const isActive = (path: string, route: string) => {
   // all routes other than auth routes include "/dashboard"

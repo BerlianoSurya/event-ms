@@ -8,6 +8,17 @@ import EventForm from './EventForm'
 import { Button } from '@/components/ui/button'
 import Modal from './Modal'
 import { CirclePlus } from 'lucide-react'
+import { DataTable } from './ui/data-table'
+import { getColumns } from '@/app/dashboard/events/columns'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { MoreHorizontal } from 'lucide-react'
 
 const EventList = async ({ data }) => {
   const [isShown, setShown] = useState(false)
@@ -24,6 +35,11 @@ const EventList = async ({ data }) => {
       }
     })
   }
+  const handleEdit = (event) => {
+    setEventData(data.find((obj) => obj.id === event))
+    console.log(event)
+    setShown(true)
+  }
   const handleOpenModal = () => {
     startTransition(() => {
       setaddModal(true)
@@ -33,6 +49,7 @@ const EventList = async ({ data }) => {
     startTransition(() => {
       setShown(false)
       setEventId('')
+      setEventData({})
     })
   }
   const handleCloseAddModal = () => {
@@ -104,7 +121,25 @@ const EventList = async ({ data }) => {
                   {event.status}
                 </td>
                 <td className="whitespace-nowrap border-e border-neutral-200 px-6 py-4 font-medium dark:border-white/10 place-content-around flex gap-4">
-                  <Button
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="h-8 w-8 p-0">
+                        <span className="sr-only">Open menu</span>
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => handleClick(event.id)}>
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleDelete(event.id)}>
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  {/* <Button
                     className="text-white"
                     onClick={() => handleClick(event.id)}
                   >
@@ -116,12 +151,16 @@ const EventList = async ({ data }) => {
                     disabled={isPending}
                   >
                     {'Delete'}
-                  </Button>
+                  </Button> */}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+        {/* <DataTable
+          columns={getColumns({ handleEdit, handleDelete })}
+          data={data}
+        /> */}
       </div>
       <Modal isOpen={isShown} handleClose={handleClose} header="Edit Event">
         <EventForm

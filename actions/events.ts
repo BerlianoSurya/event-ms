@@ -38,7 +38,7 @@ export const deleteEventById = async (eventId: string) => {
 }
 
 export const editEvent = async (prevstate: any, formData: FormData) => {
-  // console.log(formData)
+  console.log(formData)
 
   const validation = await eventSchema.safeParse({
     startOn: formData.get('startOn'),
@@ -58,7 +58,7 @@ export const editEvent = async (prevstate: any, formData: FormData) => {
         await db.insert(events).values({
           startOn: formData.get('startOn'),
           createdById: user.id,
-          isPrivate: formData.get('isPrivate'),
+          isPrivate: Boolean(JSON.parse(formData.get('isPrivate'))),
           name: formData.get('name'),
           status: formData.get('status'),
           street: formData.get('street'),
@@ -73,7 +73,7 @@ export const editEvent = async (prevstate: any, formData: FormData) => {
           .update(events)
           .set({
             startOn: formData.get('startOn'),
-            isPrivate: formData.get('isPrivate'),
+            isPrivate: Boolean(JSON.parse(formData.get('isPrivate'))),
             name: formData.get('name'),
             status: formData.get('status'),
             street: formData.get('street'),

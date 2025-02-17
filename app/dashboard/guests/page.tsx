@@ -4,6 +4,7 @@ import { getCurrentUser } from '@/utils/users'
 const GuestsPage = async () => {
   const user = await getCurrentUser()
   const guests = await getGuestList(user.id)
+  console.log('guests', guests)
 
   return (
     <div>

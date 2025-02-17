@@ -5,6 +5,26 @@ import { memoize } from 'nextjs-better-unstable-cache'
 import { eq, sql } from 'drizzle-orm'
 import { delay } from './delay'
 
+export const getAttendees = memoize(
+  async () => {
+    const attendeesdata = await db
+      .select({
+        id: attendees.id,
+        name: attendees.name,
+        email: attendees.email,
+      })
+      .from(attendees)
+      .execute()
+    return attendeesdata
+  },
+  {
+    persist: true,
+    revalidateTags: () => ['dashboard:attendees'],
+    suppressWarnings: true,
+    log: ['datacache', 'verbose'],
+    logid: 'dashboard:attendees',
+  }
+)
 export const getAttendeesCountForDashboard = memoize(
   async (userId: string) => {
     await delay()
