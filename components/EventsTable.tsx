@@ -1,21 +1,21 @@
 'use client'
 
-import { getAttendeesColumns } from '@/app/dashboard/attendees/columns'
 import { DataTable } from '@/components/ui/data-table'
-import { deleteAttendee } from '@/actions/attendees'
 import { useTransition, useState } from 'react'
-import AttendeesForm from '@/components/AttendeesForm'
 import { Button } from '@/components/ui/button'
+import { deleteEventById } from '@/actions/events'
+import EventForm from './EventForm'
+import { getEventsColumns } from '@/app/dashboard/events/columns'
 import { toast } from 'sonner'
 
-const AttendeesTable = ({ attendees }) => {
+const EventsTable = ({ events }) => {
   const [isPending, startTransition] = useTransition()
-  const [editAttendee, setEditAttendee] = useState(null)
+  const [eventData, setEventData] = useState(null)
   const [actionType, setActionType] = useState('edit')
 
-  const handleDelete = (id) => {
+  const handleDelete = (event) => {
     startTransition(async () => {
-      const res = await deleteAttendee(id)
+      const res = await deleteEventById(event.id)
       if (res.status === 'success') {
         toast.success(`Successfully deleted`)
       } else {
@@ -26,20 +26,20 @@ const AttendeesTable = ({ attendees }) => {
     })
   }
 
-  const handleUpdate = (attendee) => {
-    setEditAttendee(attendee)
+  const handleUpdate = (event) => {
+    setEventData(event)
     setActionType('edit')
   }
   const handleAdd = () => {
-    setEditAttendee(null)
+    setEventData(null)
     setActionType('add')
   }
   const closeDialog = () => {
-    setEditAttendee(null)
+    setEventData(null)
     setActionType('xxx')
   }
 
-  const columns = getAttendeesColumns({
+  const columns = getEventsColumns({
     onDelete: handleDelete,
     onEdit: handleUpdate,
   })
@@ -48,19 +48,19 @@ const AttendeesTable = ({ attendees }) => {
     <>
       <div className="flex justify-end mb-4">
         <Button className="text-white" onClick={handleAdd}>
-          Add Attendee
+          Add Events
         </Button>
       </div>
-      <DataTable data={attendees} columns={columns} />
-      {editAttendee || actionType === 'add' ? (
-        <AttendeesForm
+      <DataTable data={events} columns={columns} />
+      {eventData || actionType === 'add' ? (
+        <EventForm
           actionType={actionType}
-          data={editAttendee}
-          onClose={closeDialog}
+          eventData={eventData}
+          handleClose={closeDialog}
         />
       ) : null}
     </>
   )
 }
 
-export default AttendeesTable
+export default EventsTable

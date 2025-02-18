@@ -1,27 +1,32 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table'
+import { Checkbox } from '@/components/ui/checkbox'
 import RowActionProps from '@/components/RowActionProps'
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-export type AttendeesType = {
-  id: string
-  name: string
-  email: string
+export type RsvpType = {
+  attendeeId: string
+  eventId: string
+  status: string
 }
 
-export const getAttendeesColumns = ({
+export const getRsvpsColumns = ({
   onEdit,
   onDelete,
-}): ColumnDef<AttendeesType>[] => [
+}): ColumnDef<RsvpType>[] => [
   {
-    accessorKey: 'name',
+    accessorKey: 'attendeeId',
     header: 'Name',
   },
   {
-    accessorKey: 'email',
-    header: 'Email',
+    accessorKey: 'status',
+    header: 'status',
+  },
+  {
+    accessorKey: 'eventId',
+    header: 'Event',
   },
   {
     id: 'actions',

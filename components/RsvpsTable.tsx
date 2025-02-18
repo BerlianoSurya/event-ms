@@ -1,21 +1,21 @@
 'use client'
 
-import { getAttendeesColumns } from '@/app/dashboard/attendees/columns'
 import { DataTable } from '@/components/ui/data-table'
-import { deleteAttendee } from '@/actions/attendees'
 import { useTransition, useState } from 'react'
-import AttendeesForm from '@/components/AttendeesForm'
 import { Button } from '@/components/ui/button'
+import RsvpForm from './RsvpForm'
+import { getRsvpsColumns } from '@/app/dashboard/rsvps/columns'
+import { deleteRsvpById } from '@/actions/rsvps'
 import { toast } from 'sonner'
 
-const AttendeesTable = ({ attendees }) => {
+const RsvpsTable = ({ rsvps, attendees, events }) => {
   const [isPending, startTransition] = useTransition()
-  const [editAttendee, setEditAttendee] = useState(null)
+  const [rsvpData, setRsvpData] = useState(null)
   const [actionType, setActionType] = useState('edit')
 
-  const handleDelete = (id) => {
+  const handleDelete = (rsvp) => {
     startTransition(async () => {
-      const res = await deleteAttendee(id)
+      const res = await deleteRsvpById(rsvp.id)
       if (res.status === 'success') {
         toast.success(`Successfully deleted`)
       } else {
@@ -26,20 +26,22 @@ const AttendeesTable = ({ attendees }) => {
     })
   }
 
-  const handleUpdate = (attendee) => {
-    setEditAttendee(attendee)
+  const handleUpdate = (rsvp) => {
+    // console.log('attendee', rsvp)
+    setRsvpData(rsvp)
     setActionType('edit')
   }
+  //   console.log('rsvpData', rsvpData)
   const handleAdd = () => {
-    setEditAttendee(null)
+    setRsvpData(null)
     setActionType('add')
   }
   const closeDialog = () => {
-    setEditAttendee(null)
+    setRsvpData(null)
     setActionType('xxx')
   }
 
-  const columns = getAttendeesColumns({
+  const columns = getRsvpsColumns({
     onDelete: handleDelete,
     onEdit: handleUpdate,
   })
@@ -48,14 +50,16 @@ const AttendeesTable = ({ attendees }) => {
     <>
       <div className="flex justify-end mb-4">
         <Button className="text-white" onClick={handleAdd}>
-          Add Attendee
+          Add RSVP
         </Button>
       </div>
-      <DataTable data={attendees} columns={columns} />
-      {editAttendee || actionType === 'add' ? (
-        <AttendeesForm
+      <DataTable data={rsvps} columns={columns} />
+      {rsvpData || actionType === 'add' ? (
+        <RsvpForm
+          data={rsvpData}
+          attendees={attendees}
+          events={events}
           actionType={actionType}
-          data={editAttendee}
           onClose={closeDialog}
         />
       ) : null}
@@ -63,4 +67,4 @@ const AttendeesTable = ({ attendees }) => {
   )
 }
 
-export default AttendeesTable
+export default RsvpsTable

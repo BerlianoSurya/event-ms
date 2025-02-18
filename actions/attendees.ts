@@ -7,8 +7,14 @@ import { attendeesSchema } from '@/utils/formSchema'
 import { revalidateTag } from 'next/cache'
 
 export const deleteAttendee = async (id: string) => {
-  await db.delete(attendees).where(eq(attendees.id, id.id))
+  const del = await db.delete(attendees).where(eq(attendees.id, id.id))
   revalidateTag('dashboard:attendees')
+
+  if (del?.rowsAffected > 0) {
+    return { status: 'success' }
+  } else {
+    return { status: 'failed', message: 'Something went wrong' }
+  }
 }
 
 export const addEditAttendee = async (prevstate: any, formData: FormData) => {
@@ -54,4 +60,11 @@ export const addEditAttendee = async (prevstate: any, formData: FormData) => {
       data: validation.data,
     }
   }
+}
+
+export async function getAttendeeIdsAndNames() {
+  const data = await db
+    .select({ id: attendees.id, name: attendees.name })
+    .from(attendees)
+  return data.map((attendee) => ({ label: attendee.name, value: attendee.id }))
 }

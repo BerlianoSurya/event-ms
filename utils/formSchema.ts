@@ -27,3 +27,11 @@ export const attendeesSchema = z.object({
   name: z.string().min(5, 'Name too short'),
   email: z.string().email({ message: 'Email is required' }),
 })
+
+export const rsvpSchema = z.object({
+  attendeeId: z.string().min(1, { message: 'Must choose an attendee' }),
+  eventId: z.string().min(1, { message: 'Must choose an event' }),
+  status: z.enum(['going', 'not-going', 'maybe'], {
+    message: 'Must choose status',
+  }),
+})

@@ -32,9 +32,14 @@ export const createNewEvent = async () => {
 export const deleteEventById = async (eventId: string) => {
   await delay()
   console.log('EVENTID', eventId)
-  await db.delete(events).where(eq(events.id, eventId))
+  const del = await db.delete(events).where(eq(events.id, eventId))
   revalidateTag('dashboard:events')
   revalidateTag('events')
+  if (del?.rowsAffected > 0) {
+    return { status: 'success' }
+  } else {
+    return { status: 'failed', message: 'Something went wrong' }
+  }
 }
 
 export const editEvent = async (prevstate: any, formData: FormData) => {
@@ -100,4 +105,10 @@ export const editEvent = async (prevstate: any, formData: FormData) => {
       data: validation.data,
     }
   }
+}
+export async function getEventIdsAndNames() {
+  const data = await db
+    .select({ id: events.id, name: events.name })
+    .from(events)
+  return data.map((event) => ({ label: event.name, value: event.id }))
 }

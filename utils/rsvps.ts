@@ -32,3 +32,18 @@ export const getRsvpsForDashboard = memoize(
   },
   { persist: true, revalidateTags: () => ['dashboard:rsvps'] }
 )
+
+export const getAllRsvps = memoize(
+  async () => {
+    await delay()
+
+    const data = await db
+      .select()
+      .from(rsvps)
+      .orderBy(desc(rsvps.createdAt))
+      .execute()
+
+    return data
+  },
+  { persist: true, revalidateTags: () => ['dashboard:rsvps'] }
+)
