@@ -1,15 +1,15 @@
 'use client'
 
-// import { Input } from '@nextui-org/react'
+import { Input } from '@/components/ui/input'
 import { registerUser } from '@/actions/auth'
 import Link from 'next/link'
-import { useFormState } from 'react-dom'
+import { useActionState } from 'react'
 import SubmitButton from './SubmitButton'
 
 const initState = { message: null }
 
 const SignupForm = () => {
-  const [formState, action] = useFormState<{ message: string | null }>(
+  const [formState, action] = useActionState<{ message: string | null }>(
     registerUser,
     initState
   )

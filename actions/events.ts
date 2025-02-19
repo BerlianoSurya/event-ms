@@ -2,19 +2,14 @@
 
 import { db } from '@/db/db'
 import { events } from '@/db/schema'
-import { delay } from '@/utils/delay'
 import { getCurrentUser } from '@/utils/users'
 import randomName from '@scaleway/random-name'
 import { revalidateTag } from 'next/cache'
 import { and, asc, count, desc, eq, ne, not } from 'drizzle-orm'
-import { z } from 'zod'
-import { redirect } from 'next/navigation'
-import { COOKIE_NAME } from '@/utils/constants'
-import { editEventUtil } from '@/utils/events'
 import { eventSchema } from '@/utils/formSchema'
+import { memoize } from 'nextjs-better-unstable-cache'
 
 export const createNewEvent = async () => {
-  await delay()
   const user = await getCurrentUser()
 
   await db.insert(events).values({
@@ -30,8 +25,6 @@ export const createNewEvent = async () => {
 }
 
 export const deleteEventById = async (eventId: string) => {
-  await delay()
-  console.log('EVENTID', eventId)
   const del = await db.delete(events).where(eq(events.id, eventId))
   revalidateTag('dashboard:events')
   revalidateTag('events')
@@ -43,8 +36,6 @@ export const deleteEventById = async (eventId: string) => {
 }
 
 export const editEvent = async (prevstate: any, formData: FormData) => {
-  console.log(formData)
-
   const validation = await eventSchema.safeParse({
     startOn: formData.get('startOn'),
     isPrivate: formData.get('isPrivate'),
@@ -106,9 +97,13 @@ export const editEvent = async (prevstate: any, formData: FormData) => {
     }
   }
 }
-export async function getEventIdsAndNames() {
+export const getEventIdsAndNames = memoize(async () => {
   const data = await db
     .select({ id: events.id, name: events.name })
     .from(events)
   return data.map((event) => ({ label: event.name, value: event.id }))
-}
+})
+
+export const getForRsvpEventIdsAndNames = memoize(async () => {
+  return await db.select({ id: events.id, name: events.name }).from(events)
+})

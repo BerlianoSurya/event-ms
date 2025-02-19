@@ -5,6 +5,7 @@ import { attendees, events, rsvps } from '@/db/schema'
 import { eq, sql } from 'drizzle-orm'
 import { attendeesSchema } from '@/utils/formSchema'
 import { revalidateTag } from 'next/cache'
+import { memoize } from 'nextjs-better-unstable-cache'
 
 export const deleteAttendee = async (id: string) => {
   const del = await db.delete(attendees).where(eq(attendees.id, id.id))
@@ -18,8 +19,6 @@ export const deleteAttendee = async (id: string) => {
 }
 
 export const addEditAttendee = async (prevstate: any, formData: FormData) => {
-  console.log(formData)
-
   const validation = await attendeesSchema.safeParse({
     email: formData.get('email'),
     name: formData.get('name'),
@@ -62,9 +61,24 @@ export const addEditAttendee = async (prevstate: any, formData: FormData) => {
   }
 }
 
-export async function getAttendeeIdsAndNames() {
-  const data = await db
-    .select({ id: attendees.id, name: attendees.name })
-    .from(attendees)
-  return data.map((attendee) => ({ label: attendee.name, value: attendee.id }))
-}
+export const getAttendeeIdsAndNames = memoize(
+  async () => {
+    const data = await db
+      .select({ id: attendees.id, name: attendees.name })
+      .from(attendees)
+    return data.map((attendee) => ({
+      label: attendee.name,
+      value: attendee.id,
+    }))
+  },
+  { persist: true, revalidateTags: () => ['attendeeIdName'] }
+)
+
+export const getForAttendeeIdsAndNames = memoize(
+  async () => {
+    return await db
+      .select({ id: attendees.id, name: attendees.name })
+      .from(attendees)
+  },
+  { persist: true, revalidateTags: () => ['attendeeIdName'] }
+)

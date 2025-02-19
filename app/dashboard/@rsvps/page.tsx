@@ -1,3 +1,4 @@
+import StatusChip from '@/components/StatusChip'
 import { getRsvpsForDashboard } from '@/utils/rsvps'
 import { getCurrentUser } from '@/utils/users'
 // import { Chip } from '@nextui-org/react'
@@ -12,7 +13,6 @@ const statusColors = {
 const RsvpSlot = async () => {
   const user = await getCurrentUser()
   const data = await getRsvpsForDashboard(user.id)
-  console.log('RSVP', data)
   return (
     <div className="w-full h-full p-4 flex justify-center">
       <div className="w-full">
@@ -26,7 +26,7 @@ const RsvpSlot = async () => {
               <span>{attendees.name}</span>
               <span>
                 {/* <Chip size="sm" color={statusColors[rsvps?.status]}> */}
-                {rsvps?.status}
+                <StatusChip label={rsvps?.status} />
                 {/* </Chip> */}
               </span>
               <span>

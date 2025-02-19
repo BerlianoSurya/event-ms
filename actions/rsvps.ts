@@ -2,16 +2,11 @@
 
 import { db } from '@/db/db'
 import { rsvps } from '@/db/schema'
-import { delay } from '@/utils/delay'
-import { getCurrentUser } from '@/utils/users'
 import { revalidateTag } from 'next/cache'
 import { and, asc, count, desc, eq, ne, not } from 'drizzle-orm'
-import { z } from 'zod'
 import { rsvpSchema } from '@/utils/formSchema'
 
 export const deleteRsvpById = async (rsvpId: string) => {
-  await delay()
-  console.log('EVENTID', rsvpId)
   const deleteRsvp = await db.delete(rsvps).where(eq(rsvps.id, rsvpId))
   revalidateTag('dashboard:rsvps')
   revalidateTag('rsvps')
@@ -23,8 +18,6 @@ export const deleteRsvpById = async (rsvpId: string) => {
 }
 
 export const addEditRsvp = async (prevstate: any, formData: FormData) => {
-  console.log(formData)
-
   const validation = await rsvpSchema.safeParse({
     attendeeId: formData.get('attendeeId'),
     status: formData.get('status'),

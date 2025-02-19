@@ -98,7 +98,6 @@ const RsvpForm = ({
 
   const wrappedAction = withHandleClose(addEditRsvp, onClose)
   const [state, formAction] = useActionState(wrappedAction, null)
-  console.log('data', data)
   return (
     <Dialog open onOpenChange={onClose}>
       <DialogContent>

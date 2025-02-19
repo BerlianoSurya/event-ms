@@ -8,7 +8,13 @@ import { getRsvpsColumns } from '@/app/dashboard/rsvps/columns'
 import { deleteRsvpById } from '@/actions/rsvps'
 import { toast } from 'sonner'
 
-const RsvpsTable = ({ rsvps, attendees, events }) => {
+const RsvpsTable = ({
+  rsvps,
+  attendees,
+  events,
+  eventsForColumn,
+  attendeesForColumn,
+}) => {
   const [isPending, startTransition] = useTransition()
   const [rsvpData, setRsvpData] = useState(null)
   const [actionType, setActionType] = useState('edit')
@@ -44,6 +50,8 @@ const RsvpsTable = ({ rsvps, attendees, events }) => {
   const columns = getRsvpsColumns({
     onDelete: handleDelete,
     onEdit: handleUpdate,
+    attendeesForColumn,
+    eventsForColumn,
   })
 
   return (

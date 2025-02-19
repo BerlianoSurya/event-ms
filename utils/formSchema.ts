@@ -25,7 +25,7 @@ export const eventSchema = z.object({
 })
 export const attendeesSchema = z.object({
   name: z.string().min(5, 'Name too short'),
-  email: z.string().email({ message: 'Email is required' }),
+  email: z.string().email({ message: 'A valid email is required' }),
 })
 
 export const rsvpSchema = z.object({

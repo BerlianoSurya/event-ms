@@ -28,11 +28,17 @@ export const getEventsColumns = ({
   },
   {
     accessorKey: 'startOn',
-    header: 'startOn',
+    header: 'Event Date',
+    cell: ({ row }) =>
+      new Date(row.getValue('startOn')).toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+      }),
   },
   {
     accessorKey: 'isPrivate',
-    header: 'isPrivate',
+    header: 'Private',
     cell: ({ row }) => {
       const value = row.getValue<boolean>('isPrivate')
       return (
@@ -48,23 +54,23 @@ export const getEventsColumns = ({
   },
   {
     accessorKey: 'status',
-    header: 'status',
+    header: 'Status',
   },
   {
     accessorKey: 'street',
-    header: 'street',
+    header: 'Street',
   },
   {
     accessorKey: 'streetNumber',
-    header: 'streetNumber',
+    header: 'Street Number',
   },
   {
     accessorKey: 'zip',
-    header: 'zip',
+    header: 'ZIP',
   },
   {
     accessorKey: 'description',
-    header: 'description',
+    header: 'Description',
   },
   {
     id: 'actions',

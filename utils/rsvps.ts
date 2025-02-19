@@ -2,13 +2,10 @@ import 'server-only'
 import { db } from '@/db/db'
 import { and, desc, eq, inArray } from 'drizzle-orm'
 import { rsvps, events, attendees } from '@/db/schema'
-import { delay } from './delay'
 import { memoize } from 'nextjs-better-unstable-cache'
 
 export const getRsvpsForDashboard = memoize(
   async (userId: string) => {
-    await delay()
-
     const userEvents = await db.query.events.findMany({
       where: eq(events.createdById, userId),
       columns: {
@@ -35,14 +32,11 @@ export const getRsvpsForDashboard = memoize(
 
 export const getAllRsvps = memoize(
   async () => {
-    await delay()
-
     const data = await db
       .select()
       .from(rsvps)
       .orderBy(desc(rsvps.createdAt))
       .execute()
-
     return data
   },
   { persist: true, revalidateTags: () => ['dashboard:rsvps'] }

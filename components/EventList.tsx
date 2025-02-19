@@ -37,7 +37,6 @@ const EventList = async ({ data }) => {
   }
   const handleEdit = (event) => {
     setEventData(data.find((obj) => obj.id === event))
-    console.log(event)
     setShown(true)
   }
   const handleOpenModal = () => {

@@ -1,12 +1,12 @@
 'use client'
 import { signinUser } from '@/actions/auth'
-// import { Input } from '@nextui-org/react'
+import { Input } from '@/components/ui/input'
 import Link from 'next/link'
-import { useFormState } from 'react-dom'
+import { useActionState } from 'react'
 import SubmitButton from './SubmitButton'
 const initState = { message: null }
 const SigninForm = () => {
-  const [formState, action] = useFormState<{ message: string | null }>(
+  const [formState, action] = useActionState<{ message: string | null }>(
     signinUser,
     initState
   )
@@ -16,23 +16,9 @@ const SigninForm = () => {
       className="bg-content1 border border-default-100 shadow-lg rounded-md p-3 flex flex-col gap-2 "
     >
       <h3 className="my-4">Sign in</h3>
-      {/* <Input
-        fullWidth
-        required
-        size="lg"
-        placeholder="Email"
-        name="email"
-        type="email"
-      />
-      <Input
-        name="password"
-        fullWidth
-        required
-        size="lg"
-        type="password"
-        placeholder="Password"
-      /> */}
-      <SubmitButton label={'Sign In'} />
+      <Input required placeholder="Email" name="email" type="email" />
+      <Input name="password" required type="password" placeholder="Password" />
+      <SubmitButton label={'Sign In'} className="my-6" />
       <div>
         <Link href="/signup">{`Don't have an account?`}</Link>
       </div>

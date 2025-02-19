@@ -15,10 +15,18 @@ export type RsvpType = {
 export const getRsvpsColumns = ({
   onEdit,
   onDelete,
+  eventsForColumn,
+  attendeesForColumn,
 }): ColumnDef<RsvpType>[] => [
   {
     accessorKey: 'attendeeId',
     header: 'Name',
+    cell: ({ row }) => {
+      const attendee = attendeesForColumn.find(
+        (a) => a.id === row.original.attendeeId
+      )
+      return attendee ? attendee.name : 'Unknown Attendee'
+    },
   },
   {
     accessorKey: 'status',
@@ -27,6 +35,10 @@ export const getRsvpsColumns = ({
   {
     accessorKey: 'eventId',
     header: 'Event',
+    cell: ({ row }) => {
+      const event = eventsForColumn.find((e) => e.id === row.original.eventId)
+      return event ? event.name : 'Unknown Event'
+    },
   },
   {
     id: 'actions',

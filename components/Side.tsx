@@ -53,9 +53,9 @@ const Side = ({ isCollapsed }: { isCollapsed: boolean }) => {
         ))}
       </div>
       <div className="absolute bottom-0 w-full left-0 px-4">
-        <button onClick={() => signout()} fullWidth variant="ghost">
+        {/* <button onClick={() => signout()} fullWidth variant="ghost">
           Sign Out
-        </button>
+        </button> */}
       </div>
     </div>
   )

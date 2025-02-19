@@ -1,3 +1,5 @@
+import EventChip from '@/components/EventChip'
+import StatusChip from '@/components/StatusChip'
 import { getEventsForDashboard } from '@/utils/events'
 import { getCurrentUser } from '@/utils/users'
 // import { Chip } from '@nextui-org/react'
@@ -27,12 +29,12 @@ const EventsSlot = async () => {
               </Link>
               <span>
                 {/* <Chip size="sm" color={statusColors[event.status]}> */}
-                {event.status}
+                <StatusChip label={event?.status} />
                 {/* </Chip> */}
               </span>
               <span>
                 {/* <Chip size="sm" variant="faded"> */}
-                {event.name}
+                <EventChip label={event?.name} />
                 {/* </Chip> */}
               </span>
             </div>
