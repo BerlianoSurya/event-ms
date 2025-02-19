@@ -14,6 +14,9 @@ export type AttendeesType = {
 export const getAttendeesColumns = ({
   onEdit,
   onDelete,
+}: {
+  onEdit: (attendee: AttendeesType) => void // Expecting a function with an attendee parameter
+  onDelete: (attendee: AttendeesType) => void
 }): ColumnDef<AttendeesType>[] => [
   {
     accessorKey: 'name',

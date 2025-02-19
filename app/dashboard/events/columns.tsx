@@ -18,10 +18,15 @@ export type EventsType = {
   startOn: Date
 }
 
+type EventActions = {
+  onEdit: (id: string) => void
+  onDelete: (id: string) => void
+}
+
 export const getEventsColumns = ({
   onEdit,
   onDelete,
-}): ColumnDef<EventsType>[] => [
+}: EventActions): ColumnDef<EventsType>[] => [
   {
     accessorKey: 'name',
     header: 'Name',

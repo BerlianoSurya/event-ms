@@ -8,7 +8,7 @@ import { revalidateTag } from 'next/cache'
 import { memoize } from 'nextjs-better-unstable-cache'
 
 export const deleteAttendee = async (id: string) => {
-  const del = await db.delete(attendees).where(eq(attendees.id, id.id))
+  const del = await db.delete(attendees).where(eq(attendees.id, id))
   revalidateTag('dashboard:attendees')
 
   if (del?.rowsAffected > 0) {
@@ -28,8 +28,8 @@ export const addEditAttendee = async (prevstate: any, formData: FormData) => {
     if (formData.get('actionType')) {
       if (formData.get('actionType') === 'add') {
         await db.insert(attendees).values({
-          email: formData.get('email'),
-          name: formData.get('name'),
+          email: formData.get('email') as string,
+          name: formData.get('name') as string,
         })
         revalidateTag('dashboard:attendees')
         revalidateTag('attendees')
@@ -37,10 +37,10 @@ export const addEditAttendee = async (prevstate: any, formData: FormData) => {
         await db
           .update(attendees)
           .set({
-            name: formData.get('name'),
-            email: formData.get('email'),
+            name: formData.get('name') as string,
+            email: formData.get('email') as string,
           })
-          .where(eq(attendees.id, formData.get('attendeeId')))
+          .where(eq(attendees.id, (formData.get('attendeeId') as string) || ''))
 
         revalidateTag('dashboard:attendees')
         revalidateTag('attendees')

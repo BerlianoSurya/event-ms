@@ -8,14 +8,25 @@ import AttendeesForm from '@/components/AttendeesForm'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 
-const AttendeesTable = ({ attendees }) => {
+type Attendee = {
+  id: string
+  name: string
+  email: string
+}
+
+type AttendeesTableProps = {
+  attendees: Attendee[]
+}
+
+const AttendeesTable = ({ attendees }: AttendeesTableProps) => {
+  console.log('attend', attendees)
   const [isPending, startTransition] = useTransition()
   const [editAttendee, setEditAttendee] = useState(null)
   const [actionType, setActionType] = useState('edit')
 
-  const handleDelete = (id) => {
+  const handleDelete = (attendee: Attendee) => {
     startTransition(async () => {
-      const res = await deleteAttendee(id)
+      const res = await deleteAttendee(attendee.id)
       if (res.status === 'success') {
         toast.success(`Successfully deleted`)
       } else {
@@ -26,7 +37,7 @@ const AttendeesTable = ({ attendees }) => {
     })
   }
 
-  const handleUpdate = (attendee) => {
+  const handleUpdate = (attendee: any) => {
     setEditAttendee(attendee)
     setActionType('edit')
   }

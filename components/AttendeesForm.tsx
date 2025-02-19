@@ -24,10 +24,25 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
 import { attendeesSchema } from '@/utils/formSchema'
+
 type AttendeeData = {
   name: string
   email: string
+  id: string
 } | null
+
+type ValidationError = {
+  validation: string
+  code: string
+  message: string
+  path: string[]
+}
+
+type ErrorsType = {
+  name?: string
+  email?: string
+}
+
 const AttendeesForm = ({
   data,
   actionType,
@@ -35,9 +50,9 @@ const AttendeesForm = ({
 }: {
   data: AttendeeData
   actionType: string
-  //   onClose: void
+  onClose: () => void
 }) => {
-  const [errors, setErrors] = useState({})
+  const [errors, setErrors] = useState<ErrorsType>({})
   const withHandleClose = (action: any, onClose: () => void) => {
     return async (prevState: any, formData: FormData) => {
       const result = await action(prevState, formData)
@@ -46,12 +61,12 @@ const AttendeesForm = ({
         toast.success('The form is successfully submit.')
         onClose()
       } else {
-        const errorMap = {}
-        result?.errors.forEach((issue) => {
+        const errorMap: Record<string, string> = {}
+        ;(result?.errors as ValidationError[])?.forEach((issue: any) => {
           errorMap[issue.path[0]] = issue.message
         })
         setErrors(errorMap)
-        result?.errors.every((error) => {
+        result?.errors.every((error: ValidationError) => {
           toast.error(error.message)
         })
       }
@@ -67,7 +82,7 @@ const AttendeesForm = ({
   })
 
   const wrappedAction = withHandleClose(addEditAttendee, onClose)
-  const [state, formAction] = useActionState(wrappedAction, null)
+  const [state, formAction, isPending] = useActionState(wrappedAction, null)
 
   return (
     <Dialog open onOpenChange={onClose}>
@@ -113,8 +128,16 @@ const AttendeesForm = ({
               )}
             />
             <div className="flex justify-center mt-4">
-              <Button type="submit" className="text-white font-extrabold">
-                {actionType === 'add' ? 'Add' : 'Update'}
+              <Button
+                disabled={isPending}
+                className="justify-self-center text-white hover:bg-slate-800"
+                type="submit"
+              >
+                {isPending ? (
+                  <div className="w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <span>{actionType === 'add' ? 'Add' : 'Update'}</span>
+                )}
               </Button>
             </div>
 

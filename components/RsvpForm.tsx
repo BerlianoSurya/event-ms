@@ -97,7 +97,7 @@ const RsvpForm = ({
   })
 
   const wrappedAction = withHandleClose(addEditRsvp, onClose)
-  const [state, formAction] = useActionState(wrappedAction, null)
+  const [state, formAction, isPending] = useActionState(wrappedAction, null)
   return (
     <Dialog open onOpenChange={onClose}>
       <DialogContent>
@@ -285,15 +285,15 @@ const RsvpForm = ({
             />
             <div className="flex justify-center space-x-3 space-y-0 rounded-md p-4 shadow">
               <Button
-                // disabled={isPending}
+                disabled={isPending}
                 className="justify-self-center text-white hover:bg-slate-800"
                 type="submit"
               >
-                {/* {isPending ? (
-                  <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-                ) : ( */}
-                `Save event`
-                {/* )} */}
+                {isPending ? (
+                  <div className="w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <span>{actionType === 'add' ? 'Add' : 'Update'}</span>
+                )}
               </Button>
               <input type="hidden" name="actionType" value={actionType} />
               {actionType === 'edit' && (
